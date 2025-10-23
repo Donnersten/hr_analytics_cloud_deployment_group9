@@ -1,0 +1,6 @@
+sources:
+  - name: hr_project_db   
+    schema: staging         
+    tables:
+      - name: stg_ads
+        identifier: job_ads
