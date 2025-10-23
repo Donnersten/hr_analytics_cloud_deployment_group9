@@ -6,4 +6,4 @@ sources:
         identifier: job_ads
         meta:
           dagster:
-            asset_key: ["dlt_jobads_source_jobsearch_resource"]
+            asset_key: ["dlt_jobads_source_jobsearch_resource_all"]
