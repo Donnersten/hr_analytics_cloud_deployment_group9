@@ -44,7 +44,7 @@ def dbt_models(context: dg.AssetExecutionContext, dbt: DbtCliResource):
 
 
 #jobs
-job_dlt = dg.define_asset_job("job_dlt", selection=dg.AssetSelection.keys("dlt_jobads_source_jobads_resource"))
+job_dlt = dg.define_asset_job("job_dlt", selection=dg.AssetSelection.keys("dlt_jobads_source_jobsearch_resource"))
 
 job_dbt = dg.define_asset_job("job_dbt", selection=dg.AssetSelection.key_prefixes("warehouse", "marts"))
 
@@ -53,7 +53,7 @@ schedule_dlt = dg.ScheduleDefinition(
     cron_schedule="15 13 * * *"
 )
 
-@dg.asset_sensor(asset_key=dg.AssetKey("dlt_jobads_source_jobads_resource"), job_name="job_dbt")
+@dg.asset_sensor(asset_key=dg.AssetKey("dlt_jobads_source_jobsearch_resource"), job_name="job_dbt")
 
 def dlt_load_sensor():
     yield dg.RunRequest()
