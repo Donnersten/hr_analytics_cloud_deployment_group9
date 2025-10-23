@@ -4,6 +4,10 @@ import json
 from pathlib import Path
 import os
 
+query = ""
+
+# Yrken med social inriktning, "Yrken med teknisk inriktning", "Chefer och verksamhetsledare"
+occupation_fields = ("GazW_2TU_kJw", "6Hq3_tKo_V57", "bh3H_Y3h_5eD")
 
 def _get_ads(url_for_search, params):
     headers = {"accept": "application/json"}
@@ -12,7 +16,7 @@ def _get_ads(url_for_search, params):
     return json.loads(response.content.decode("utf8"))
 
 
-@dlt.resource(write_disposition="merge", primary_key="id")
+@dlt.resource(table_name ="job_ads",write_disposition="merge", primary_key="id")
 def jobsearch_resource(params):
     """
     params should include at least:
@@ -45,30 +49,9 @@ def jobsearch_resource(params):
         offset += limit
 
 
-def run_pipeline(query, table_name, occupation_fields):
-    pipeline = dlt.pipeline(
-        pipeline_name="jobads_pipeline",
-        destination="snowflake",
-        dataset_name="staging",
-    )
-
+@dlt.source
+def jobads_source():
     for occupation_field in occupation_fields:
         params = {"q": query, "limit": 100, "occupation-field": occupation_field}
-        load_info = pipeline.run(
-            jobsearch_resource(params=params), table_name=table_name
-        )
-        print(f"Occupation field: {occupation_field}")
-        print(load_info)
-
-
-if __name__ == "__main__":
-    working_directory = Path(__file__).parent
-    os.chdir(working_directory)
-
-    query = ""
-    table_name = "job_ads"
-
-    # Yrken med social inriktning, "Yrken med teknisk inriktning", "Chefer och verksamhetsledare"
-    occupation_fields = ("GazW_2TU_kJw", "6Hq3_tKo_V57", "bh3H_Y3h_5eD")
-
-    run_pipeline(query, table_name, occupation_fields)
+        return jobsearch_resource(params=params)
+        

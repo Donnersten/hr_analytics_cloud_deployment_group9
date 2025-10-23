@@ -6,7 +6,7 @@ name: 'dbt_code'
 version: '1.0.0'
 
 # This setting configures which "profile" dbt uses for this project.
-profile: 'dbt_code'
+profile: 'dbt_duckdb_project'
 
 # These configurations specify where dbt should look for different types of files.
 # The `model-paths` config, for example, states that models in this project can be
@@ -34,7 +34,6 @@ clean-targets:         # directories to be removed by `dbt clean`
 models:
   dbt_code:
     +materialized: table
-    +database: hr_project_db
 
     src:
       +materialized: ephemeral
