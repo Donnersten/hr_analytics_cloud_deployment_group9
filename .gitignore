@@ -215,3 +215,14 @@ dbt_packages/
 logs/
  
 setup_user.sql
+
+.vscode
+ 
+# dagster
+**/.tmp*/
+ 
+# duckdb
+*.duckdb
+ 
+# Mac
+*.DS_Store
