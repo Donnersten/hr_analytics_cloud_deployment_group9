@@ -11,9 +11,15 @@ occupation_fields = ("GazW_2TU_kJw", "6Hq3_tKo_V57", "bh3H_Y3h_5eD")
 
 def _get_ads(url_for_search, params):
     headers = {"accept": "application/json"}
-    response = requests.get(url_for_search, headers=headers, params=params)
-    response.raise_for_status()  # check for http errors
-    return json.loads(response.content.decode("utf8"))
+    try:
+        response = requests.get(url_for_search, headers=headers, params=params)
+        response.raise_for_status()  # check for http errors
+        return json.loads(response.content.decode("utf8"))
+    except requests.exceptions.HTTPError as e:
+        if e.response.status_code == 503:
+            # API is unavailable, return empty to gracefully stop
+            return {"hits": []}
+        raise
 
 
 @dlt.resource(table_name ="job_ads",write_disposition="merge", primary_key="id")
@@ -51,7 +57,30 @@ def jobsearch_resource(params):
 
 @dlt.source
 def jobads_source():
-    for occupation_field in occupation_fields:
-        params = {"q": query, "limit": 100, "occupation-field": occupation_field}
-        return jobsearch_resource(params=params)
+    @dlt.resource(table_name="job_ads", write_disposition="merge", primary_key="id")
+    def jobsearch_resource_all():
+        url = "https://jobsearch.api.jobtechdev.se"
+        url_for_search = f"{url}/search"
+
+        for occupation_field in occupation_fields:
+            params = {"q": query, "limit": 100, "occupation-field": occupation_field}
+            offset = 0
+
+            while True:
+                page_params = dict(params, offset=offset)
+                data = _get_ads(url_for_search, page_params)
+
+                hits = data.get("hits", [])
+                if not hits:
+                    break
+
+                for ad in hits:
+                    yield ad
+
+                if len(hits) < 100 or offset > 1900:
+                    break
+
+                offset += 100
+
+    return jobsearch_resource_all()
         
