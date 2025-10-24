@@ -2,9 +2,6 @@ from pathlib import Path
 import duckdb
 import os 
 import pandas as pd
-from dotenv import load_dotenv
-
-load_dotenv()
 
 DB_PATH = os.getenv("DUCKDB_PATH")
  

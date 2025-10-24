@@ -3,15 +3,16 @@ import dlt
 import dagster as dg
 from dagster_dlt import DagsterDltResource, dlt_assets
 from dagster_dbt import DbtCliResource, DbtProject, dbt_assets
+import os
 
 import sys
-sys.path.insert(0, "../code")
+sys.path.insert(0, "../data_extract_load")
 
 
 from job_pipeline import jobads_source
 
 # data warehouse directory
-db_path = str(Path(__file__).parents[1] / "data_warehouse/job_ads.duckdb")
+db_path = os.getenv("DUCKDB_PATH")
 
 dlt_resource = DagsterDltResource()
 
@@ -28,7 +29,7 @@ def dlt_load(context: dg.AssetExecutionContext, dlt:DagsterDltResource):
 
 dbt_project_directory = Path(__file__).parents[1] / "dbt_code"
 
-profiles_dir = Path.home() / ".dbt"
+profiles_dir = os.getenv("DBT_PROFILES_DIR")
 
 dbt_project = DbtProject(project_dir=dbt_project_directory, profiles_dir=profiles_dir)
 
