@@ -1,25 +1,22 @@
-import os
+from pathlib import Path
+import duckdb
+import os 
+import pandas as pd
 from dotenv import load_dotenv
-import snowflake.connector
-import pandas as pd 
 
+load_dotenv()
+
+DB_PATH = os.getenv("DUCKDB_PATH")
  
-def query_job_listings(tabel_name = 'marts.mart_social_job'):
-
-    load_dotenv()
-    query= f'SELECT * FROM {tabel_name}'
-
-    with snowflake.connector.connect(
-        user=os.getenv("SNOWFLAKE_USER"),
-        password=os.getenv("SNOWFLAKE_PASSWORD"),
-        account=os.getenv("SNOWFLAKE_ACCOUNT"),
-        warehouse=os.getenv("SNOWFLAKE_WAREHOUSE"),
-        database=os.getenv("SNOWFLAKE_DATABASE"),
-        schema=os.getenv("SNOWFLAKE_SCHEMA"),
-        role=os.getenv("SNOWFLAKE_ROLE"),
-    ) as conn:
-
-        # Execute the query
+def query_job_listings(tabel_name='marts.mart_socialjob'):
+    query = f'SELECT * FROM {tabel_name}'
+    with duckdb.connect(DB_PATH, read_only=True) as conn:
+    
+       
+        # return conn.query(f"{query}").df()
         df = pd.read_sql(query, conn)
 
         return df
+if __name__ == "__main__":
+    df = query_job_listings()
+    print(df)
