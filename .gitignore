@@ -226,3 +226,5 @@ setup_user.sql
  
 # Mac
 *.DS_Store
+
+tmp_az_cli.txt
