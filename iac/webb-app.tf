@@ -49,5 +49,8 @@ resource "azurerm_linux_web_app" "app" {
     DUCKDB_PATH      = "/mnt/data/job_ads.duckdb"
   }
 
-  depends_on = [azurerm_storage_share.upload_dbt]
+  depends_on = [
+    null_resource.build_and_push_dashboard,
+    azurerm_container_group.example,
+    azurerm_storage_share.upload_dbt]
 }
