@@ -23,6 +23,8 @@ resource "azurerm_storage_share_file" "upload_dbt_profiles" {
     source = "assets/profiles.yml"
     storage_share_id = azurerm_storage_share.upload_dbt.id
     path = ".dbt"
+
+    depends_on = [ azurerm_storage_share_directory.dbt_folder ]
   
 }
 

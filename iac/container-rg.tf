@@ -21,11 +21,11 @@ resource "null_resource" "build_and_push_pipeline" {
 }
 
 resource "azurerm_container_group" "example" {
-  name                = "${var.prefix_app_name}-continst"
+  name                = "${var.prefix_app_name}-continst${random_integer.number.result}"
   location            = azurerm_resource_group.storage_rg.location
   resource_group_name = azurerm_resource_group.storage_rg.name
   ip_address_type     = "Public"
-  dns_name_label      = "${var.prefix_app_name}-continst"
+  dns_name_label      = "${var.prefix_app_name}-continst${random_integer.number.result}"
   os_type             = "Linux"
 
  depends_on = [
