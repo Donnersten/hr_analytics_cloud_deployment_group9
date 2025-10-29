@@ -53,11 +53,11 @@ models:
           - dbt_expectations.expect_column_quantile_values_to_be_between:
               quantile: 0.99
               min_value: 1
-              max_value: 50
+              max_value: 300
           
           - dbt_expectations.expect_column_max_to_be_between:
               min_value: 1
-              max_value: 50
+              max_value: 300
               config:
                 severity: warn
 

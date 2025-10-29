@@ -127,27 +127,34 @@ def layout():
 
     st.write("### Hitta jobb")
     cols = st.columns(2)
+
     with cols[0]:
-        municipality = st.selectbox("Välj stad", options=sorted(df["workplace_address__municipality"].dropna().unique()))
-    
+        city_options = ["Alla"] + sorted(df["workplace_address__municipality"].dropna().unique().tolist())
+        municipality = st.selectbox("Välj stad", options=city_options)
+
+        if municipality == "Alla":
+            df_city = df
+        else:
+            df_city = df.query("workplace_address__municipality == @municipality")
+
     with cols[1]:
-        employer_options = ["Alla"] + sorted(df.query("workplace_address__municipality == @municipality")["EMPLOYER__NAME"].dropna().unique().tolist())
+        employer_options = ["Alla"] + sorted(df_city["EMPLOYER__NAME"].dropna().unique().tolist())
         employer_name = st.selectbox("Välj arbetsgivare", employer_options)
 
-        df_filtered = df.query("workplace_address__municipality == @municipality")
-        if employer_name != "Alla":
-            df_filtered = df_filtered.query("EMPLOYER__NAME == @employer_name")
+    if employer_name == "Alla":
+        df_filtered = df_city
+    else:
+        df_filtered = df_city.query("EMPLOYER__NAME == @employer_name")
 
     cols = st.columns(2)
     with cols[0]:
         st.metric(label="Totala jobb", value=df_filtered["vacancies"].sum(), border=True)
-    
+
     with cols[1]:
         top_jobs = (
             df_filtered.groupby("occupation_group")["vacancies"]
             .sum()
             .sort_values(ascending=False)
-            .head(5)
             .reset_index()
         )
         st.dataframe(top_jobs, hide_index=True)
