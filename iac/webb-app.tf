@@ -18,7 +18,7 @@ resource "azurerm_service_plan" "asp" {
     resource_group_name = azurerm_resource_group.storage_rg.name
     os_type             = "Linux"
     sku_name            = "P0v3"
-  
+
 }
 
 resource "azurerm_linux_web_app" "app" {
@@ -51,6 +51,6 @@ resource "azurerm_linux_web_app" "app" {
 
   depends_on = [
     null_resource.build_and_push_dashboard,
-    azurerm_container_group.example,
+    azurerm_container_group.acg,
     azurerm_storage_share.upload_dbt]
 }

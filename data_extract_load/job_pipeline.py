@@ -7,7 +7,13 @@ import os
 query = ""
 
 # Yrken med social inriktning, "Yrken med teknisk inriktning", "Chefer och verksamhetsledare"
-occupation_fields = ("GazW_2TU_kJw", "6Hq3_tKo_V57", "bh3H_Y3h_5eD")
+#occupation_fields = ("GazW_2TU_kJw", "6Hq3_tKo_V57", "bh3H_Y3h_5eD")
+
+# "Administration, ekonomi, juridik","Bygg och anläggning","Chefer och verksamhetsledare","Data/IT","Försäljning, inköp, marknadsföring",
+# "Hälso- och sjukvård","Hotell, restaurang, storhushåll","Installation, drift, underhåll","Kropps- och skönhetsvård",
+# "Kultur, media, design","Pedagogik","Säkerhet och bevakning","Transport, distribution, lager","Yrken med social inriktning","Yrken med teknisk inriktning",
+occupation_fields = ("X82t_awd_Qyc", "j7Cq_ZJe_GkT", "bh3H_Y3h_5eD", "apaJ_2ja_LuF", "RPTn_bxG_ExZ", "NYW6_mP6_vwf", "ScKy_FHB_7wT", "yhCP_AqT_tns", "Uuf1_GMh_Uvw", "9puE_nYg_crq", "MVqp_eS8_kDZ", "E7hm_BLq_fqZ", "ASGV_zcE_bWf", "GazW_2TU_kJw", "6Hq3_tKo_V57")
+
 
 def _get_ads(url_for_search, params):
     headers = {"accept": "application/json"}
@@ -83,4 +89,4 @@ def jobads_source():
                 offset += 100
 
     return jobsearch_resource_all()
-        
+

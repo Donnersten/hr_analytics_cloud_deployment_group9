@@ -3,7 +3,7 @@ resource "azurerm_container_registry" "acr" {
     location = var.location
     resource_group_name = azurerm_resource_group.storage_rg.name
     sku = "Basic"
-    admin_enabled = true  
+    admin_enabled = true
 }
 
 resource "null_resource" "build_and_push_pipeline" {
@@ -20,7 +20,7 @@ resource "null_resource" "build_and_push_pipeline" {
   depends_on = [azurerm_container_registry.acr]
 }
 
-resource "azurerm_container_group" "example" {
+resource "azurerm_container_group" "acg" {
   name                = "${var.prefix_app_name}-continst${random_integer.number.result}"
   location            = azurerm_resource_group.storage_rg.location
   resource_group_name = azurerm_resource_group.storage_rg.name
@@ -38,13 +38,13 @@ resource "azurerm_container_group" "example" {
     username = azurerm_container_registry.acr.admin_username
     password = azurerm_container_registry.acr.admin_password
   }
-    
+
   container {
     name   = "hr-pipeline"
     image  = "${azurerm_container_registry.acr.name}.azurecr.io/hr-project-pipeline:latest"
     cpu    = "1"
     memory = "4"
- 
+
     ports {
       port     = 80
       protocol = "TCP"
@@ -65,7 +65,7 @@ resource "azurerm_container_group" "example" {
       mount_path = "/mnt/data"
       read_only  = false
       share_name = azurerm_storage_share.upload_dbt.name
- 
+
       storage_account_name = azurerm_storage_account.storage_account.name
       storage_account_key  = azurerm_storage_account.storage_account.primary_access_key
     }
