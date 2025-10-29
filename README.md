@@ -31,6 +31,15 @@ Terraform creates the following resources in Azure:
 
 ---
 
+## How Terraform Works in This Project
+
+Terraform is used to provision and manage all Azure infrastructure components required for this project. It automates the creation of resource groups, storage accounts, container registries, container instances, and app services, ensuring that the environment is consistent and reproducible.
+
+In addition, Terraform integrates with Docker to automate the process of building Docker images and pushing them to the Azure Container Registry (ACR). Through Terraform resources or local-exec commands, it ensures that the latest Docker images are deployed seamlessly to the Azure Web App and Container Instances. This integration enables reproducible deployment of both infrastructure and application containers together, simplifying management and reducing the risk of configuration drift.
+
+---
+
+
 ## Data Flow
 1. Dagster triggers a **daily run** via the DLT pipeline.  
 2. Data is fetched from the **Jobtech API** → loaded into **DuckDB**.  
@@ -77,21 +86,73 @@ terraform apply -auto-approve
   
 
 ---
-
 ## Cost Comparison Against Cloud Data Warehouse
 
-| Component | DuckDB (Azure) | Snowflake (Cloud DW) | Comment |
-|------------|----------------|----------------------|---------|
-| **App Service (P0v3)** | ≈ 1,380 SEK | ≈ 1,380 SEK | 1 vCPU, 3.5 GB RAM, 24/7 active |
-| **Container Registry (Basic)** | ≈ 55 SEK | ≈ 55 SEK | Image storage |
-| **Storage (10 GB)** | ≈ 10 SEK (Azure File) | ≈ 4 SEK (Snowflake) | Proportional billing |
-| **Compute (pipeline)** | ≈ 15 SEK (ACI 15 min/day) | ≈ 165 SEK (X-Small warehouse 15 min/day) | Runtime |
-| **Total / month** | **≈ 1,460 SEK** | **≈ 1,550 SEK** | Difference ≈ +90 SEK for Snowflake |
-
-**Conclusion:**  
-App Service (P0v3) is the largest cost.  
-DuckDB is most cost-effective for small volumes and daily runs.  
-Snowflake is more scalable but justified only for larger data volumes or concurrent users.
+### Assumptions
+- Pipeline runs **once per day** (~15 minutes).  
+- **App Service (P0v3)** runs **24/7** to host the Streamlit dashboard.  
+- Approximately **10 GB** of data stored per month.  
+- **1 vCPU, 3.5 GB RAM** used for compute services.  
+- Prices are based on **October 2025 Azure and Snowflake pricing** (≈ 11.2 SEK/USD).  
 
 ---
+
+### Azure Deployment (DuckDB-based)
+| Component | Estimated Monthly Cost | Notes |
+|------------|------------------------|-------|
+| **App Service (P0v3)** | ≈ 1,380 SEK | Premium v3 plan, 24/7 active |
+| **Container Registry (Basic)** | ≈ 55 SEK | Stores Docker images for pipeline & dashboard |
+| **Azure File Share (10 GB)** | ≈ 10 SEK | DuckDB file storage |
+| **Container Instance (Dagster)** | ≈ 15 SEK | 15 minutes per day runtime |
+| **Total / Month** | **≈ 1,460 SEK** | Dominated by App Service cost |
+
+---
+
+### Snowflake Deployment
+| Component | Estimated Monthly Cost | Notes |
+|------------|------------------------|-------|
+| **App Service (P0v3)** | ≈ 1,380 SEK | Dashboard hosting (same as Azure) |
+| **Container Registry (Basic)** | ≈ 55 SEK | Image storage |
+| **Snowflake Storage (10 GB)** | ≈ 4 SEK | $40/TB → proportional billing |
+| **Snowflake Compute (XS)** | ≈ 165 SEK | 1 credit/hour × 7.5 hours/month |
+| **Total / Month** | **≈ 1,550 SEK** | Slightly higher due to compute credits |
+
+---
+
+### Local / Lightweight DuckDB Deployment
+| Component | Estimated Monthly Cost | Notes |
+|------------|------------------------|-------|
+| **DuckDB Engine** | 0 SEK | Free and open-source (MIT license) |
+| **Local Storage (10 GB)** | 0–10 SEK | Depends on file location (local or cloud) |
+| **Compute** | 0 SEK | Uses existing system CPU during execution |
+| **Total / Month** | **≈ 0–10 SEK** | Only storage costs apply if hosted remotely |
+
+---
+
+### Monthly Cost Distribution (Approximation)
+
+```
+Azure (DuckDB)
+App Service: ██████████████████████████████████████████████████ (94%)
+Others: ██ (6%)
+
+Snowflake
+App Service: ████████████████████████████████████████████ (89%)
+Compute: ████ (10%)
+Storage: █ (1%)
+```
+
+---
+
+### Analysis
+While DuckDB and Snowflake present similar total monthly costs at small scale, their **cost models differ fundamentally**:  
+- DuckDB incurs **minimal compute cost** because it runs locally or inside a lightweight container.  
+- Snowflake charges per **credit**, even for short workloads.  
+- The **App Service** cost dominates both architectures, overshadowing differences in compute or storage.  
+
+For a **daily pipeline with limited data**, DuckDB remains the **most cost-efficient**.  
+Snowflake becomes beneficial for **large-scale data**, **parallel pipelines**, or **multi-user environments** that require concurrent access and auto-scaling.
+
+---
+
 
