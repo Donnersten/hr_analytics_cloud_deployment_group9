@@ -11,9 +11,21 @@ def layout():
     cols = st.columns(2)
     with cols[0]:
         tabel_options = {
+            "Administration, ekonomi, juridik": "marts.mart_adm_job",
+            "Bygg och anläggning": "marts.mart_constuct_job",
+            "Chefer och verksamhetsledare": "marts.mart_managers_job",
+            "Data/IT": "marts.mart_data_job",
+            "Försäljning, inköp, marknadsföring": "marts.mart_sales_job",
+            "Hälso- och sjukvård": "marts.mart_health_job",
+            "Hotell, restaurang, storhushåll": "marts.mart_hotel_job",
+            "Installation, drift, underhåll": "marts.mart_install_job",
+            "Kropps- och skönhetsvård": "marts.mart_body_job",
+            "Kultur, media, design": "marts.mart_culture_job",
+            "Pedagogik": "marts.mart_pedagogy_job",
+            "Säkerhet och bevakning": "marts.mart_safety_job",
+            "Transport, distribution, lager": "marts.mart_transport_job",
             "Yrken med social inriktning": "marts.mart_social_job",
             "Yrken med teknisk inriktning": "marts.mart_technical_jobs",
-            "Chefer och verksamhetsledare": "marts.mart_managers_job"
         }
         table = st.selectbox("Välj tabell", options=list(tabel_options.keys()))
         table = tabel_options[table]
