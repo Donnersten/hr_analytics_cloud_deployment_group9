@@ -2,7 +2,7 @@ with stg_job_ads as (select * from {{ source('hr_project_db', 'stg_ads') }})
 
 select 
     occupation__label,
-    number_of_vacancies as vacancies,
+    coalesce(number_of_vacancies, 1) as vacancies,
     relevance,
     application_deadline,
     id,
