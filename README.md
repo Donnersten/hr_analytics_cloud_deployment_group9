@@ -100,22 +100,22 @@ terraform apply -auto-approve
 ### Azure Deployment (DuckDB-based)
 | Component | Estimated Monthly Cost | Notes |
 |------------|------------------------|-------|
-| **App Service (P0v3)** | ≈ 1,380 SEK | Premium v3 plan, 24/7 active |
+| **App Service (P0v3)** | ≈ 612 SEK | Premium v3 plan, 24/7 active |
 | **Container Registry (Basic)** | ≈ 55 SEK | Stores Docker images for pipeline & dashboard |
 | **Azure File Share (10 GB)** | ≈ 10 SEK | DuckDB file storage |
 | **Container Instance (Dagster)** | ≈ 15 SEK | 15 minutes per day runtime |
-| **Total / Month** | **≈ 1,460 SEK** | Dominated by App Service cost |
+| **Total / Month** | **≈ 692 SEK** | Dominated by App Service cost |
 
 ---
 
 ### Snowflake Deployment
 | Component | Estimated Monthly Cost | Notes |
 |------------|------------------------|-------|
-| **App Service (P0v3)** | ≈ 1,380 SEK | Dashboard hosting (same as Azure) |
+| **App Service (P0v3)** | ≈ 612 SEK | Dashboard hosting (same as Azure) |
 | **Container Registry (Basic)** | ≈ 55 SEK | Image storage |
 | **Snowflake Storage (10 GB)** | ≈ 4 SEK | $40/TB → proportional billing |
 | **Snowflake Compute (XS)** | ≈ 165 SEK | 1 credit/hour × 7.5 hours/month |
-| **Total / Month** | **≈ 1,550 SEK** | Slightly higher due to compute credits |
+| **Total / Month** | **≈ 836 SEK** | Slightly higher due to compute credits |
 
 ---
 
